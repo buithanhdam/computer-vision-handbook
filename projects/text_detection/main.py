@@ -1,7 +1,7 @@
 import os
 import cv2
 import matplotlib.pyplot as plt
-from .preprocessing import preprocessing
+from projects.text_detection.preprocessing import preprocessing
 image = cv2.imread(os.path.join('.', 'projects/text_detection/page_01.jpg'))
 if image is None:
     print("Failed to load image. Please check the file path.")

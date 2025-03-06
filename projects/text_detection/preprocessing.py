@@ -1,19 +1,31 @@
 import cv2
 import numpy as np
-def preprocessing(image):
-    # read image form path  # convert to gray img
-    processed_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    # set threshold for img
-    thresh, im_bw = cv2.threshold(processed_image, 210, 230, cv2.THRESH_BINARY)
-    
-    # remove noise
-    kernel = np.ones((1, 1), np.uint8)
+import cv2
+import numpy as np
+
+def preprocessing(image, max_value=255, adaptive_method=cv2.ADAPTIVE_THRESH_GAUSSIAN_C, 
+                  threshold_type=cv2.THRESH_BINARY, block_size=11, C=2, kernel_size=(1, 1), blur_ksize=3):
+    if image is None:
+        raise ValueError("Image đầu vào không hợp lệ hoặc không tồn tại.")
+
+    if len(image.shape) == 3:
+        processed_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    else:
+        processed_image = image
+
+    # Áp dụng Adaptive Thresholding
+    thresh, im_bw = cv2.threshold(image, 202, 255, cv2.THRESH_BINARY)
+
+    kernel = np.ones(kernel_size, np.uint8)
+
     denoise_image = cv2.dilate(im_bw, kernel, iterations=1)
-    kernel = np.ones((1, 1), np.uint8)
     denoise_image = cv2.erode(denoise_image, kernel, iterations=1)
     denoise_image = cv2.morphologyEx(denoise_image, cv2.MORPH_CLOSE, kernel)
-    denoise_image = cv2.medianBlur(denoise_image, 3)
+
+    denoise_image = cv2.medianBlur(denoise_image, blur_ksize)
+
     return denoise_image
+
     
 def thin_font(image):
     image = cv2.bitwise_not(image)
